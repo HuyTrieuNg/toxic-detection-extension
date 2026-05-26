@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VOZ Toxic Detector</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <img src="../icons/icon48.png" alt="Logo" class="logo" />
+        <div class="header-title">
+          <h1>VOZ Toxic Detector</h1>
+          <span class="version">v1.0.0</span>
+        </div>
+      </div>
+      <!-- Toggle bật/tắt extension -->
+      <label class="toggle-switch" title="Bật/tắt extension">
+        <input type="checkbox" id="toggleEnabled" />
+        <span class="slider"></span>
+      </label>
+    </header>
+
+    <!-- Status Banner -->
+    <div class="status-banner" id="statusBanner">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="statusText">Đang kiểm tra...</span>
+    </div>
+
+    <!-- Model Selector -->
+    <section class="section">
+      <h2 class="section-title">Chọn Model AI</h2>
+      <div class="model-cards">
+        <label class="model-card" id="card-bilstm">
+          <input type="radio" name="model" value="bilstm" id="radio-bilstm" />
+          <div class="model-card-content">
+            <div class="model-icon">⚡</div>
+            <div class="model-info">
+              <span class="model-name">BiLSTM</span>
+              <span class="model-desc">Nhanh · Lightweight</span>
+            </div>
+            <div class="model-check">✓</div>
+          </div>
+        </label>
+
+        <label class="model-card" id="card-phobert">
+          <input type="radio" name="model" value="phobert" id="radio-phobert" />
+          <div class="model-card-content">
+            <div class="model-icon">🤖</div>
+            <div class="model-info">
+              <span class="model-name">PhoBERT</span>
+              <span class="model-desc">Chính xác · Transformer</span>
+            </div>
+            <div class="model-check">✓</div>
+          </div>
+        </label>
+      </div>
+    </section>
+
+    <!-- Stats -->
+    <section class="section">
+      <h2 class="section-title">Thống kê trang hiện tại</h2>
+      <div class="stats-grid">
+        <div class="stat-card stat-card--total">
+          <span class="stat-number" id="statTotal">—</span>
+          <span class="stat-label">Tổng bình luận</span>
+        </div>
+        <div class="stat-card stat-card--toxic">
+          <span class="stat-number" id="statToxic">—</span>
+          <span class="stat-label">Toxic</span>
+        </div>
+        <div class="stat-card stat-card--safe">
+          <span class="stat-number" id="statSafe">—</span>
+          <span class="stat-label">Bình thường</span>
+        </div>
+      </div>
+      <!-- Progress bar -->
+      <div class="toxic-bar-wrap" id="toxicBarWrap" style="display:none">
+        <div class="toxic-bar-label">
+          <span>Tỉ lệ toxic</span>
+          <span id="toxicPercent">0%</span>
+        </div>
+        <div class="toxic-bar-track">
+          <div class="toxic-bar-fill" id="toxicBarFill"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <section class="section section--actions">
+      <button class="btn btn--primary" id="btnRescan">
+        <span class="btn-icon">🔍</span>
+        Quét lại trang
+      </button>
+      <div class="not-thread-warning" id="notThreadWarning" style="display:none">
+        ⚠ Chỉ hoạt động trên trang thread của VOZ.vn
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span>API: <code id="apiUrlDisplay">localhost:8000</code></span>
+    </footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

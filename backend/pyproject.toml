@@ -1,0 +1,17 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = "Toxic comment detection backend for Chrome Extension"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "django>=6.0.5",
+    "djangorestframework>=3.15.0",
+    "django-cors-headers>=4.3.0",
+    "tensorflow>=2.15.0",
+    "transformers>=4.40.0",
+    "torch>=2.2.0",
+    "numpy>=1.24.0",
+    "sentencepiece>=0.1.99",
+    "pyvi>=0.1.1",
+]

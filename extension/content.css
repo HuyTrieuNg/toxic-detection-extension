@@ -1,0 +1,81 @@
+/* ──────────────────────────────────────────────────────────────
+   VOZ Toxic Detector — Content Styles
+   Inject vào trang VOZ.vn để hiển thị các nhãn toxic/safe
+   ────────────────────────────────────────────────────────────── */
+
+/* Toxic badge container */
+.voz-toxic-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: default;
+  user-select: none;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+.voz-toxic-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Toxic badge — đỏ */
+.voz-badge--toxic {
+  background: linear-gradient(135deg, #ff4d4d, #cc0000);
+  color: #fff;
+  border: 1px solid #b30000;
+  box-shadow: 0 2px 6px rgba(204, 0, 0, 0.35);
+}
+
+/* Safe badge — xanh */
+.voz-badge--safe {
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: #fff;
+  border: 1px solid #15803d;
+  box-shadow: 0 2px 6px rgba(34, 197, 94, 0.3);
+}
+
+.voz-badge-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.voz-badge-text {
+  font-size: 10px;
+  letter-spacing: 0.8px;
+}
+
+.voz-badge-confidence {
+  font-size: 10px;
+  opacity: 0.85;
+  font-weight: 600;
+}
+
+/* ── Highlight bài toxic toàn bộ ── */
+article.voz-message--toxic {
+  background-color: rgba(255, 77, 77, 0.04) !important;
+  border-left: 3px solid #ff4d4d !important;
+  transition: background-color 0.3s ease, border-left 0.3s ease;
+}
+
+/* ── Animation xuất hiện badge ── */
+@keyframes voz-badge-appear {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.voz-toxic-badge {
+  animation: voz-badge-appear 0.25s ease forwards;
+}
