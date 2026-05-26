@@ -9,7 +9,8 @@ backend/
 ├── ai-models/
 │   ├── LearnedEmb_BiLSTM_Attention/
 │   │   ├── best_model.keras       # BiLSTM Keras model
-│   │   └── vocab.json             # Vocabulary mapping
+│   │   ├── vocab.json             # Vocabulary mapping
+│   │   └── stop_words.txt         # Stop words list
 │   └── Phobert_binary/
 │       ├── model.safetensors      # PhoBERT fine-tuned weights
 │       ├── config.json
