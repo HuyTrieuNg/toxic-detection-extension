@@ -113,7 +113,7 @@ function attachEventListeners() {
           payload: currentState,
         });
         // Reset stats while re-scanning
-        updateStats({ total: 0, toxic: 0, nontoxic: 0 });
+        updateStats({ total: 0, toxic: 0, nontoxic: 0, avg_ms_per_comment: 0 });
       }
     });
   });
@@ -124,7 +124,7 @@ function attachEventListeners() {
     $('btnRescan').disabled = true;
     $('btnRescan').innerHTML = '<span class="btn-icon">⏳</span> Đang quét...';
     setStatus('loading', 'Đang quét bình luận...');
-    updateStats({ total: 0, toxic: 0, nontoxic: 0 });
+    updateStats({ total: 0, toxic: 0, nontoxic: 0, avg_ms_per_comment: 0 });
     await notifyContentScript({ type: 'RESCAN' });
     // Button sẽ được reset khi nhận STATS_UPDATE từ content script
   });
@@ -147,10 +147,17 @@ async function fetchStats() {
 // ─────────────────────────────────────────────────────────────
 // Update stats UI
 // ─────────────────────────────────────────────────────────────
-function updateStats({ total, toxic, nontoxic }) {
+function formatMs(ms) {
+  if (!ms || ms === 0) return '—';
+  if (ms >= 1000) return `${(ms / 1000).toFixed(2)} s`;
+  return `${ms.toFixed(1)} ms`;
+}
+
+function updateStats({ total, toxic, nontoxic, avg_ms_per_comment }) {
   $('statTotal').textContent = total ?? '—';
   $('statToxic').textContent = toxic ?? '—';
   $('statSafe').textContent = nontoxic ?? '—';
+  $('statAvgTime').textContent = formatMs(avg_ms_per_comment ?? 0);
 
   if (total > 0) {
     const pct = Math.round((toxic / total) * 100);

@@ -291,6 +291,29 @@ input:checked + .slider::before {
   letter-spacing: 0.3px;
 }
 
+.stat-avg-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.stat-avg-label {
+  font-size: 11px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+.stat-avg-value {
+  font-size: 12px;
+  color: var(--accent-blue);
+  font-weight: 700;
+}
+
 /* ── Toxic Progress Bar ──────────────────────── */
 .toxic-bar-wrap {
   margin-top: 4px;

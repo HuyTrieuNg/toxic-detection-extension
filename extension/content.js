@@ -23,7 +23,8 @@ let selectedModel = 'bilstm';
 let apiUrl = API_URL_DEFAULT;
 let scanInProgress = false;
 let labeledPostIds = new Set();
-let stats = { total: 0, toxic: 0, nontoxic: 0 };
+// stats: track counts and cumulative processing time (ms)
+let stats = { total: 0, toxic: 0, nontoxic: 0, processed_ms_total: 0, processed_count: 0 };
 
 // ─────────────────────────────────────────────────────────────
 // Init — đọc state từ storage rồi bắt đầu scan
@@ -60,7 +61,7 @@ async function init() {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'RESCAN') {
     labeledPostIds.clear();
-    stats = { total: 0, toxic: 0, nontoxic: 0 };
+    stats = { total: 0, toxic: 0, nontoxic: 0, processed_ms_total: 0, processed_count: 0 };
     removeAllLabels();
     scanAllComments().then(() => sendResponse({ success: true }));
     return true;
@@ -83,7 +84,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (modelChanged) {
       // Model thay đổi → xóa nhãn cũ và rescan
       labeledPostIds.clear();
-      stats = { total: 0, toxic: 0, nontoxic: 0 };
+      stats = { total: 0, toxic: 0, nontoxic: 0, processed_ms_total: 0, processed_count: 0 };
       removeAllLabels();
     }
     scanAllComments();
@@ -92,7 +93,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   if (message.type === 'GET_STATS') {
-    sendResponse(stats);
+    const avg_ms_per_comment = stats.processed_count > 0 ? stats.processed_ms_total / stats.processed_count : 0;
+    sendResponse(Object.assign({}, stats, { avg_ms_per_comment }));
     return true;
   }
 });
@@ -153,9 +155,9 @@ async function processBatch(posts) {
   const texts = posts.map((p) => p.text);
 
   console.log(`[VOZ Toxic Detector] Gửi batch ${posts.length} bình luận đến API [${selectedModel}]`);
-
   let data;
   try {
+    const start = performance.now();
     // Gọi API TRỰC TIẾP từ content script — không relay qua background worker
     // Chrome cho phép vì host_permissions có "http://localhost:8000/*"
     const response = await fetch(`${apiUrl}/predict/batch/`, {
@@ -172,6 +174,13 @@ async function processBatch(posts) {
 
     data = await response.json();
     console.log(`[VOZ Toxic Detector] Nhận kết quả: ${data.toxic_count}/${data.total} toxic`);
+    const end = performance.now();
+    const duration = end - start; // ms for this batch round-trip
+    // update cumulative stats
+    stats.processed_ms_total += duration;
+    stats.processed_count += posts.length;
+    // attach per-batch debug
+    console.debug(`[VOZ Toxic Detector] Batch xử lý: ${duration.toFixed(1)} ms — ~${(duration / posts.length).toFixed(1)} ms/post`);
   } catch (err) {
     console.error('[VOZ Toxic Detector] Không kết nối được API (server đang chạy chưa?):', err.message);
     return;
@@ -260,7 +269,11 @@ function observeNewComments() {
 // Notify popup về stats mới (nếu popup đang mở)
 // ─────────────────────────────────────────────────────────────
 function notifyStats() {
-  chrome.runtime.sendMessage({ type: 'STATS_UPDATE', payload: stats }).catch(() => {
+  const avg_ms_per_comment = stats.processed_count > 0
+    ? stats.processed_ms_total / stats.processed_count
+    : 0;
+  const payload = Object.assign({}, stats, { avg_ms_per_comment });
+  chrome.runtime.sendMessage({ type: 'STATS_UPDATE', payload }).catch(() => {
     // Popup không mở — bỏ qua
   });
 }
